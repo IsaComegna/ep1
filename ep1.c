@@ -132,7 +132,7 @@ double** lerMatriz(char *nomeArquivo, int *linhas, int *colunas, int *nao_nulos)
 //derivada em função do angulo tetaj
 void derivadaTetaBarraJ(){
 
-    for (it ; it<=k ; it++){
+    for (it ; it<=k  it++){
 
 
     }
