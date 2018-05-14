@@ -11,17 +11,33 @@ void destruirMatriz(double** Matriz, int linhas);
 double** lerMatrizDadosBarras(char *nomeArquivo, int *linhas, int *colunas, int *nao_nulos, int opcao);
 /* fim dos prototipos */
 
+int linhas = 77;
+int colunas = 6;
+int nao_nulos = 310 ;
 
-char *nomeArquivo = "../EP1/2_Reticulada/2_Reticulada_Ynodal.txt";
+/*lendo os arquivos txt disponibilizados e criando as respectivas matrizes*/
+char *stevenson_ynodal = "../EP1/1_Stevenson/1_Stevenson_Ynodal.txt";
+char *stevenson_dadosbarra = "../EP1/1_Stevenson/1_Stevenson_DadosBarras.txt";
+double matriz_stevenson_dados_barra = **lerMatrizDadosBarras(stevenson_dadosbarra, &linhas, &colunas , &nao_nulos, 0);
+double matriz_stevenson_ynodal = **lerMatrizDadosBarras(stevenson_ynodal, &linhas, &colunas, &nao_nulos, 1);
 
-char *nomeArquivo2 = "../EP1/2_Reticulada/2_Reticulada_DadosBarras.txt";
-  double matrix;
-  int n = 77;
-  int p = 6;
-  int xis = 310 ;
-  int opcao = 1;
+char *reticulada_ynodal = "../EP1/2_Reticulada/2_Reticulada_Ynodal.txt";
+char *reticulada_dadosbarra = "../EP1/2_Reticulada/2_Reticulada_DadosBarras.txt";
+double matriz_reticulada_dados_barra = **lerMatrizDadosBarras(reticulada_dadosbarra, &linhas, &colunas , &nao_nulos, 0);
+double matriz_reticulada_ynodal = **lerMatrizDadosBarras(reticulada_ynodal, &linhas, &colunas, &nao_nulos, 1);
 
-  matrix = **lerMatrizDadosBarras(nomeArquivo, &n, &p , &xis, opcao);
+char *distrib_primaria_ynodal = "../EP1/3_Distribuicao_Primaria/3_Distribuicao_Primaria_Ynodal.txt";
+char *distrib_primaria_dadosbarra = "../EP1/3_Distribuicao_Primaria/3_Distribuicao_Primaria_DadosBarras.txt";
+double matriz_distrib_primaria_dados_barra = **lerMatrizDadosBarras(distrib_primaria_dadosbarra, &linhas, &colunas , &nao_nulos, 0);
+double matriz_distrib_primaria_ynodal = **lerMatrizDadosBarras(distrib_primaria_ynodal, &linhas, &colunas, &nao_nulos, 1);
+
+char *distrib_pri_sec_ynodal = "../EP1/4_Distribuicao_Pri_Sec/4_Distribuicao_Primaria_Secundaria_Ynodal.txt";
+char *distrib_pri_sec_dadosbarra = "../EP1/4_Distribuicao_Pri_Sec/4_Distribuicao_Primaria_Secundaria_DadosBarras.txt";
+double matriz_distrib_pri_sec_dados_barra = **lerMatrizDadosBarras(distrib_pri_sec_dadosbarra, &linhas, &colunas , &nao_nulos, 0);
+double matriz_distrib_pri_sec_ynodal = **lerMatrizDadosBarras(distrib_pri_sec_ynodal, &linhas, &colunas, &nao_nulos, 1);
+
+
+
 }
 
 double** criarMatrizDinamica(int m, int n) {
