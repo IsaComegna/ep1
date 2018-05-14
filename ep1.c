@@ -2,30 +2,32 @@
 #include <stdlib.h>
 #include <malloc.h>
 
-main() {
 
-  printf("Hello World\n");
+int main() {
+
+/*PROTOTIPOS DAS FUNCOES*/
+double** criarMatrizDinamica(int m, int n);
+void destruirMatriz(double** Matriz, int linhas);
+double** lerMatrizDadosBarras(char *nomeArquivo, int *linhas, int *colunas, int *nao_nulos, int opcao);
+/* fim dos prototipos */
+
+
+char *nomeArquivo = "../EP1/2_Reticulada/2_Reticulada_Ynodal.txt";
+
+char *nomeArquivo2 = "../EP1/2_Reticulada/2_Reticulada_DadosBarras.txt";
+  double matrix;
+  int n = 77;
+  int p = 6;
+  int xis = 310 ;
+  int opcao = 1;
+
+  matrix = **lerMatrizDadosBarras(nomeArquivo, &n, &p , &xis, opcao);
 }
-
-
-double* criarVetorDinamico(int N) {
-    double *Vetor;
-
-    Vetor = (double*) calloc(N, sizeof(double));
-
-    return Vetor;
-}
-
-
-void destruirVetor(double* Vetor) {
-
-    free(Vetor);
-}
-
 
 double** criarMatrizDinamica(int m, int n) {
     double **matriz;
     int i;
+
     if (m < 1 || n < 1) { /* verifica parametros recebidos */
         printf ("** Erro: Parametro invalido **\n");
         return (NULL);
@@ -69,39 +71,25 @@ void destruirMatriz(double** Matriz, int linhas) {
 
 /* ------------------------------- Leitura de arquivos ------------------------------- */
 
-    double* lerVetor(char *nomeArquivo, int N) {
-    double* vetor;
-    double elemento;
-    int i = 0;
-    char linha[64];
-
-    FILE *arquivo = fopen(nomeArquivo, "r");
-
-    if (arquivo == NULL) {
-        printf("\nArquivo nao encontrado\n");
-        exit(EXIT_FAILURE);
-    }
-
-    vetor = criarVetorDinamico(N);
-
-    while(fgets(linha, sizeof(linha), arquivo) != NULL) {
-        sscanf(linha, "%le\n", &elemento);
-        vetor[i] = elemento;
-        i++;
-    }
-
-    fclose(arquivo);
-    return vetor;
-}
-
-
-double** lerMatriz(char *nomeArquivo, int *linhas, int *colunas, int *nao_nulos) {
+double** lerMatrizDadosBarras(char *nomeArquivo, int *linhas, int *colunas, int *nao_nulos, int opcao) {
     char linha[512];
-    double elemento;
+    double elemento1;
+    double elemento2;
+    double elemento3;
+    double elemento4;
+
+    //se opçao = 0 , o arquivo a ser lido é do tipo MatrizDadosBarras
+    //se opção = 1, o arquivo a ser lido é do tipo Ynodal
+
     double** matriz;
     int i, j;
-    int L, C, int_nao_nulos;
+    int L, C;
 
+    if (opcao == 0){
+        C=5;
+    } else {
+        C=4;
+    }
     FILE *arquivo = fopen(nomeArquivo, "r");
 
     if(arquivo == NULL) {
@@ -109,34 +97,25 @@ double** lerMatriz(char *nomeArquivo, int *linhas, int *colunas, int *nao_nulos)
         exit(EXIT_FAILURE);
     }
 
-    fscanf(arquivo, "%d %d %d\n", &L, &C, &int_nao_nulos);
-
+    fscanf(arquivo, "%d\n", &L);
     *linhas = L;
     *colunas = C;
-    *nao_nulos = int_nao_nulos;
-
     matriz = criarMatrizDinamica(L, C);
-
     while(fgets(linha, sizeof(linha), arquivo) != NULL) { /* pega uma linha de até 512 caracteres. Null quando acabar as linhas */
-        sscanf(linha, "%d %d   %le", &i, &j, &elemento);
-        matriz[i][j] = elemento;
-        /*if(i == (L - 1) && j == (C - 1)) {
-            break;
-        }*/
-    }
 
+        if (opcao ==0){ //matriz dos dados da barra
+            sscanf(linha, "%d %le %le %le %le", &i, &elemento1, &elemento2, &elemento3, &elemento4);
+            matriz[i][0] = elemento1;
+            matriz[i][1] = elemento2;
+            matriz[i][2] = elemento3;
+            matriz[i][3] = elemento4;
+        } else { //matriz das admitancias Ynodal
+            sscanf(linha, "%d %le %le %le", &i, &elemento1, &elemento2, &elemento3);
+            matriz[i][0] = elemento1;
+            matriz[i][1] = elemento2;
+            matriz[i][2] = elemento3;
+        }
+    }
     fclose(arquivo);
     return matriz;
 }
-
-//derivada em função do angulo tetaj
-void derivadaTetaBarraJ(){
-
-    for (it ; it<=k  it++){
-
-
-    }
-}
-
-Pespj = 0;
-Qespj = 0;
