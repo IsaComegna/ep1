@@ -11,71 +11,77 @@ int size_pri_sec_ynodal, size_pri_sec_dadosbarra;
 
 int main() {
 
+    /*PROTOTIPOS DAS FUNCOES*/
+    double** criarMatrizDinamica(int m, int n);
+    void destruirMatriz(double** Matriz, int linhas);
+    double** lerMatrizDadosBarras(char *nomeArquivo, int *linhas, int *colunas, int *nao_nulos, int opcao);
+    void destruirVetor(int* Vetor);
+    int* criarVetorDinamicoInt(int N) ;
+    double* criarVetorDinamicoDouble(double N) ;
+    double fpPQ(int size_ynodal, int size_dadosbarra, double** matrix_ynodal, double** matrix_dadosbarra);
+    double** decomposicao_LU(double** matriz, int n, int p[]) ;
+    double** obter_matriz_L(double** matriz, int n);
+    double** obter_matriz_U(double** matriz, int n);
+    double** resolucao_sistema_linear(double** A, double* b, int n);
+    /* fim dos prototipos */
 
-/*PROTOTIPOS DAS FUNCOES*/
+    int linhas = 77;
+    int colunas = 6;
+    int nao_nulos = 310 ;
 
-double** criarMatrizDinamica(int m, int n);
-void destruirMatriz(double** Matriz, int linhas);
-double** lerMatrizDadosBarras(char *nomeArquivo, int *linhas, int *colunas, int *nao_nulos, int opcao);
-void destruirVetor(double* Vetor);
-double* criarVetorDinamico(int N) ;
-double fpPQ(int size_ynodal, int size_dadosbarra, double** matrix_ynodal, double** matrix_dadosbarra);
-double** decomposicao_LU(double** matriz, int n);
-double** obter_matriz_L(double** matriz, int n);
-double** obter_matriz_U(double** matriz, int n);
-/* fim dos prototipos */
+    /*lendo os arquivos txt disponibilizados e criando as respectivas matrizes*/
 
-int linhas = 77;
-int colunas = 6;
-int nao_nulos = 310 ;
+    char *stevenson_ynodal = "../EP1/1_Stevenson/1_Stevenson_Ynodal.txt";
+    char *stevenson_dadosbarra = "../EP1/1_Stevenson/1_Stevenson_DadosBarras.txt";
+    double** matriz_stevenson_dados_barra = lerMatrizDadosBarras(stevenson_dadosbarra, &linhas, &colunas , &nao_nulos, 0);
+    size_stevenson_dadosbarra = size_rows;
+    double** matriz_stevenson_ynodal = lerMatrizDadosBarras(stevenson_ynodal, &linhas, &colunas, &nao_nulos, 1);
+    size_stevenson_ynodal = size_rows;
 
-/*lendo os arquivos txt disponibilizados e criando as respectivas matrizes*/
+    char *reticulada_ynodal = "../EP1/2_Reticulada/2_Reticulada_Ynodal.txt";
+    char *reticulada_dadosbarra = "../EP1/2_Reticulada/2_Reticulada_DadosBarras.txt";
+    double** matriz_reticulada_dados_barra = lerMatrizDadosBarras(reticulada_dadosbarra, &linhas, &colunas , &nao_nulos, 0);
+    size_reticulada_dadosbarra = size_rows;
+    double** matriz_reticulada_ynodal = lerMatrizDadosBarras(reticulada_ynodal, &linhas, &colunas, &nao_nulos, 1);
+    size_reticulada_ynodal = size_rows;
 
-char *stevenson_ynodal = "../EP1/1_Stevenson/1_Stevenson_Ynodal.txt";
-char *stevenson_dadosbarra = "../EP1/1_Stevenson/1_Stevenson_DadosBarras.txt";
-double** matriz_stevenson_dados_barra = lerMatrizDadosBarras(stevenson_dadosbarra, &linhas, &colunas , &nao_nulos, 0);
-size_stevenson_dadosbarra = size_rows;
-double** matriz_stevenson_ynodal = lerMatrizDadosBarras(stevenson_ynodal, &linhas, &colunas, &nao_nulos, 1);
-size_stevenson_ynodal = size_rows;
+    char *distrib_primaria_ynodal = "../EP1/3_Distribuicao_Primaria/3_Distribuicao_Primaria_Ynodal.txt";
+    char *distrib_primaria_dadosbarra = "../EP1/3_Distribuicao_Primaria/3_Distribuicao_Primaria_DadosBarras.txt";
+    double** matriz_distrib_primaria_dados_barra = lerMatrizDadosBarras(distrib_primaria_dadosbarra, &linhas, &colunas , &nao_nulos, 0);
+    size_primario_dadosbarra = size_rows;
+    double** matriz_distrib_primaria_ynodal = lerMatrizDadosBarras(distrib_primaria_ynodal, &linhas, &colunas, &nao_nulos, 1);
+    size_primario_ynodal = size_rows;
 
-char *reticulada_ynodal = "../EP1/2_Reticulada/2_Reticulada_Ynodal.txt";
-char *reticulada_dadosbarra = "../EP1/2_Reticulada/2_Reticulada_DadosBarras.txt";
-double** matriz_reticulada_dados_barra = lerMatrizDadosBarras(reticulada_dadosbarra, &linhas, &colunas , &nao_nulos, 0);
-size_reticulada_dadosbarra = size_rows;
-double** matriz_reticulada_ynodal = lerMatrizDadosBarras(reticulada_ynodal, &linhas, &colunas, &nao_nulos, 1);
-size_reticulada_ynodal = size_rows;
+    char *distrib_pri_sec_ynodal = "../EP1/4_Distribuicao_Pri_Sec/4_Distribuicao_Primaria_Secundaria_Ynodal.txt";
+    char *distrib_pri_sec_dadosbarra = "../EP1/4_Distribuicao_Pri_Sec/4_Distribuicao_Primaria_Secundaria_DadosBarras.txt";
+    double** matriz_distrib_pri_sec_dados_barra = lerMatrizDadosBarras(distrib_pri_sec_dadosbarra, &linhas, &colunas , &nao_nulos, 0);
+    size_pri_sec_dadosbarra = size_rows;
+    double** matriz_distrib_pri_sec_ynodal = lerMatrizDadosBarras(distrib_pri_sec_ynodal, &linhas, &colunas, &nao_nulos, 1);
+    size_pri_sec_ynodal = size_rows;
 
-char *distrib_primaria_ynodal = "../EP1/3_Distribuicao_Primaria/3_Distribuicao_Primaria_Ynodal.txt";
-char *distrib_primaria_dadosbarra = "../EP1/3_Distribuicao_Primaria/3_Distribuicao_Primaria_DadosBarras.txt";
-double** matriz_distrib_primaria_dados_barra = lerMatrizDadosBarras(distrib_primaria_dadosbarra, &linhas, &colunas , &nao_nulos, 0);
-size_primario_dadosbarra = size_rows;
-double** matriz_distrib_primaria_ynodal = lerMatrizDadosBarras(distrib_primaria_ynodal, &linhas, &colunas, &nao_nulos, 1);
-size_primario_ynodal = size_rows;
+    double** A = criarMatrizDinamica(3,3);
 
-char *distrib_pri_sec_ynodal = "../EP1/4_Distribuicao_Pri_Sec/4_Distribuicao_Primaria_Secundaria_Ynodal.txt";
-char *distrib_pri_sec_dadosbarra = "../EP1/4_Distribuicao_Pri_Sec/4_Distribuicao_Primaria_Secundaria_DadosBarras.txt";
-double** matriz_distrib_pri_sec_dados_barra = lerMatrizDadosBarras(distrib_pri_sec_dadosbarra, &linhas, &colunas , &nao_nulos, 0);
-size_pri_sec_dadosbarra = size_rows;
-double** matriz_distrib_pri_sec_ynodal = lerMatrizDadosBarras(distrib_pri_sec_ynodal, &linhas, &colunas, &nao_nulos, 1);
-size_pri_sec_ynodal = size_rows;
+    A[0][0] = 1;
+    A[0][1] =2;
+    A[0][2]=1;
+    A[1][0] =3;
+    A[1][1] =1;
+    A[1][2]=4;
+    A[2][0] =1;
+    A[2][1] =8;
+    A[2][2]=3;
 
-double** A = criarMatrizDinamica(3,3);
+    double* b = criarVetorDinamicoDouble(3);
+    b[0]=0;
+    b[1] = 2;
+    b[2] = 6;
 
-A[0][0] = 5;
-A[0][1] =2;
-A[0][2]=1;
-A[1][0] =3;
-A[1][1] =1;
-A[1][2]=4;
-A[2][0] =1;
-A[2][1] =1;
-A[2][2]=3;
 
-double** LU = decomposicao_LU(A, 3);
-double** L = obter_matriz_L(LU, 3);
-double** U = obter_matriz_U(LU, 3);
+    /*double** L = obter_matriz_L(LU, 3);
+    double** U = obter_matriz_U(LU, 3);*/
+    double** blebs = resolucao_sistema_linear(A, b, 3);
 
-}
+};
 
 double Pcalc(int size_ynodal, int size_dadosbarra, double** matrix_ynodal, double** matrix_dadosbarra) {
 
@@ -191,7 +197,15 @@ double** lerMatrizDadosBarras(char *nomeArquivo, int *linhas, int *colunas, int 
     return matriz;
 }
 
-double* criarVetorDinamico(int N) {
+int* criarVetorDinamicoInt(int N) {
+    int *Vetor;
+
+    Vetor = (int*) calloc(N, sizeof(int));
+
+    return Vetor;
+}
+
+double* criarVetorDinamicoDouble(double N) {
     double *Vetor;
 
     Vetor = (double*) calloc(N, sizeof(double));
@@ -200,13 +214,13 @@ double* criarVetorDinamico(int N) {
 }
 
 
-void destruirVetor(double* Vetor) {
+void destruirVetor(int* Vetor) {
 
     free(Vetor);
 }
 
 
-double** decomposicao_LU(double** matriz, int n) {
+double** decomposicao_LU(double** matriz, int n, int p[]) {
     //matriz nxn
     double** a = criarMatrizDinamica(n, n);
 
@@ -219,8 +233,8 @@ double** decomposicao_LU(double** matriz, int n) {
     double somatorio;
     double pivo;
     int l;
-    int p;
     double aux;
+    int troca;
     double m;
     for (int k=0; k<n; k++){
         pivo = abs(a[k][k]);
@@ -229,14 +243,17 @@ double** decomposicao_LU(double** matriz, int n) {
             if (abs(a[i][k]) > pivo){
                 pivo= a[i][k];
                 l=i;
-                p=l;
             }
         }
         if (l != k){ //troca de linhas da matriz (linha p(k) e linha k)
+            troca = p[k];
+            p[k] = p[l];
+            p[l] = troca;
+
             for(int j=0; j<n; j++){
                 aux = a[k][j];
-                a[k][j] = a[p][j];
-                a[p][j] = aux;
+                a[k][j] = a[l][j];
+                a[l][j] = aux;
             }
         }
         for (int i=k+1; i<n; i++){
@@ -292,4 +309,52 @@ double** obter_matriz_U(double** matriz, int n) {
         }
     };
     return U;
+}
+
+
+double** resolucao_sistema_linear(double** A, double* b, int n) {
+    //matriz A nxn
+    /*  Quero resolver o sistema Ax = b
+        tenho que c = Pb, sendo P o vetor das permutacoes na decomposicao LU
+        Ly=Pb
+        Ux=y
+    */
+
+    int* p = criarVetorDinamicoInt(3); //vetor de permutacoes
+    for(int i=0; i<3 ; i++){
+        p[i] = i;
+    }
+    double** LU = decomposicao_LU(A, n, p);
+
+    double* c = criarVetorDinamicoDouble(n); //vetor de permutacoesdouble** a = criarMatrizDinamica(n, n);
+    double* y = criarVetorDinamicoDouble(n);
+    double* x = criarVetorDinamicoDouble(n);
+
+
+    int aux;
+
+    for (int i=0; i<n; i++){ //c=Pb
+        aux = p[i];
+        c[i] = b[aux];
+    }
+
+    double s;
+    for(int i=0; i<n; i++){ //Ly = Pb
+        s=0;
+        for(int j=0; j<n-1; j++){
+            s = s + A[i][j]*y[j];
+        }
+        y[i] = (c[i] - s)/A[i][i];
+    };
+/*
+    for(int i=n; i>0; i--){ //Ux=y
+        s=0;
+        for(int j=i; i>0; j--){
+            s = s + A[i][j]*x[j];
+        }
+        x[i] = (y[i] - s)/A[i][i];
+    }*/
+
+    return LU;
+
 }
