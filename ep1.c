@@ -72,7 +72,7 @@ int main() {
     A[2][2]=3;
 
     double* b = criarVetorDinamicoDouble(3);
-    b[0]=0;
+    b[0] = 0;
     b[1] = -7;
     b[2] = -5;
 
@@ -266,16 +266,6 @@ double** decomposicao_LU(double** matriz, int n, int p[]) {
             }
         }
     }
-/*
-    printf("%le \n", a[0][0]);
-    printf("%le \n", a[0][1]);
-    printf("%le \n", a[0][2]);
-    printf("%le \n", a[1][0]);
-    printf("%le \n", a[1][1]);
-    printf("%le \n", a[1][2]);
-    printf("%le \n", a[2][0]);
-    printf("%le \n", a[2][1]);
-    printf("%le \n", a[2][2]);*/
 
 return a;
 }
@@ -314,6 +304,8 @@ double** obter_matriz_U(double** matriz, int n) {
 
 double** resolucao_sistema_linear(double** A, double* b, int n) {
     //matriz A nxn
+
+    
     /*  Quero resolver o sistema Ax = b
         tenho que c = Pb, sendo P o vetor das permutacoes na decomposicao LU
         Ly=Pb
@@ -349,24 +341,22 @@ double** resolucao_sistema_linear(double** A, double* b, int n) {
         y[i] = (c[i] - s)/L[i][i];
     };
 
-    /*printf("%le \n", y[0]);
-    printf("%le \n", y[1]);
-    printf("%le \n", y[2]);*/
-
-/*
-    for(int i=n; i>0; i--){ //Ux=y
+    for(int i=n-1; i>=0; i--){ //Ux=y
         s=0;
-        for(int j=i; j<n; j++){
-            s = s + U[i][j]*x[j];
+        if (i!=n-1){
+            for(int j=i+1; j<n; j++){
+                s = s + U[i][j]*y[j];
+            }
         }
-        x[i] = (y[i] - s)/U[i][i];
-    }*/
+        x[i] = (y[i] - s)/(U[i][i]);
+    }
 
-/*
-    printf("%le \n", x[0]);
-    printf("%le \n", x[1]);
-    printf("%le \n", x[2]);*/
+    //desalocando as matrizes e vetores criados que nao serao mais utilizados
+    free(y);
+    free(c);
+    destruirMatriz(LU, n);
+    destruirMatriz(U, n);
+    destruirMatriz(L, n);
 
-    return x;
-
+    return LU;
 }
