@@ -61,20 +61,20 @@ int main() {
 
     double** A = criarMatrizDinamica(3,3);
 
-    A[0][0] = 1;
+    A[0][0] = 5;
     A[0][1] =2;
     A[0][2]=1;
     A[1][0] =3;
     A[1][1] =1;
     A[1][2]=4;
     A[2][0] =1;
-    A[2][1] =8;
+    A[2][1] =1;
     A[2][2]=3;
 
     double* b = criarVetorDinamicoDouble(3);
     b[0]=0;
-    b[1] = 2;
-    b[2] = 6;
+    b[1] = -7;
+    b[2] = -5;
 
 
     /*double** L = obter_matriz_L(LU, 3);
@@ -325,11 +325,13 @@ double** resolucao_sistema_linear(double** A, double* b, int n) {
         p[i] = i;
     }
     double** LU = decomposicao_LU(A, n, p);
+    double** L = obter_matriz_L(LU, n);
+    double** U = obter_matriz_U(LU, n);
+
 
     double* c = criarVetorDinamicoDouble(n); //vetor de permutacoesdouble** a = criarMatrizDinamica(n, n);
     double* y = criarVetorDinamicoDouble(n);
     double* x = criarVetorDinamicoDouble(n);
-
 
     int aux;
 
@@ -342,19 +344,29 @@ double** resolucao_sistema_linear(double** A, double* b, int n) {
     for(int i=0; i<n; i++){ //Ly = Pb
         s=0;
         for(int j=0; j<n-1; j++){
-            s = s + A[i][j]*y[j];
+            s = s + L[i][j]*y[j];
         }
-        y[i] = (c[i] - s)/A[i][i];
+        y[i] = (c[i] - s)/L[i][i];
     };
+
+    /*printf("%le \n", y[0]);
+    printf("%le \n", y[1]);
+    printf("%le \n", y[2]);*/
+
 /*
     for(int i=n; i>0; i--){ //Ux=y
         s=0;
-        for(int j=i; i>0; j--){
-            s = s + A[i][j]*x[j];
+        for(int j=i; j<n; j++){
+            s = s + U[i][j]*x[j];
         }
-        x[i] = (y[i] - s)/A[i][i];
+        x[i] = (y[i] - s)/U[i][i];
     }*/
 
-    return LU;
+/*
+    printf("%le \n", x[0]);
+    printf("%le \n", x[1]);
+    printf("%le \n", x[2]);*/
+
+    return x;
 
 }
