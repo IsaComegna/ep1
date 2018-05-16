@@ -22,7 +22,7 @@ int main() {
     double** decomposicao_LU(double** matriz, int n, int p[]) ;
     double** obter_matriz_L(double** matriz, int n);
     double** obter_matriz_U(double** matriz, int n);
-    double** resolucao_sistema_linear(double** A, double* b, int n);
+    double* resolucao_sistema_linear(double** A, double* b, int n);
     /* fim dos prototipos */
 
     int linhas = 77;
@@ -79,7 +79,7 @@ int main() {
 
     /*double** L = obter_matriz_L(LU, 3);
     double** U = obter_matriz_U(LU, 3);*/
-    double** blebs = resolucao_sistema_linear(A, b, 3);
+    double* blebs = resolucao_sistema_linear(A, b, 3);
 
 };
 
@@ -302,10 +302,10 @@ double** obter_matriz_U(double** matriz, int n) {
 }
 
 
-double** resolucao_sistema_linear(double** A, double* b, int n) {
+double* resolucao_sistema_linear(double** A, double* b, int n) {
     //matriz A nxn
 
-    
+
     /*  Quero resolver o sistema Ax = b
         tenho que c = Pb, sendo P o vetor das permutacoes na decomposicao LU
         Ly=Pb
@@ -358,5 +358,5 @@ double** resolucao_sistema_linear(double** A, double* b, int n) {
     destruirMatriz(U, n);
     destruirMatriz(L, n);
 
-    return LU;
+    return x;
 }
