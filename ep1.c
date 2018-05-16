@@ -11,15 +11,18 @@ int size_pri_sec_ynodal, size_pri_sec_dadosbarra;
 
 int main() {
 
+
 /*PROTOTIPOS DAS FUNCOES*/
+
 double** criarMatrizDinamica(int m, int n);
 void destruirMatriz(double** Matriz, int linhas);
 double** lerMatrizDadosBarras(char *nomeArquivo, int *linhas, int *colunas, int *nao_nulos, int opcao);
 void destruirVetor(double* Vetor);
 double* criarVetorDinamico(int N) ;
 double fpPQ(int size_ynodal, int size_dadosbarra, double** matrix_ynodal, double** matrix_dadosbarra);
-double decomposicao_LU(double** matriz, int n);
-
+double** decomposicao_LU(double** matriz, int n);
+double** obter_matriz_L(double** matriz, int n);
+double** obter_matriz_U(double** matriz, int n);
 /* fim dos prototipos */
 
 int linhas = 77;
@@ -27,6 +30,7 @@ int colunas = 6;
 int nao_nulos = 310 ;
 
 /*lendo os arquivos txt disponibilizados e criando as respectivas matrizes*/
+
 char *stevenson_ynodal = "../EP1/1_Stevenson/1_Stevenson_Ynodal.txt";
 char *stevenson_dadosbarra = "../EP1/1_Stevenson/1_Stevenson_DadosBarras.txt";
 double** matriz_stevenson_dados_barra = lerMatrizDadosBarras(stevenson_dadosbarra, &linhas, &colunas , &nao_nulos, 0);
@@ -55,14 +59,23 @@ size_pri_sec_dadosbarra = size_rows;
 double** matriz_distrib_pri_sec_ynodal = lerMatrizDadosBarras(distrib_pri_sec_ynodal, &linhas, &colunas, &nao_nulos, 1);
 size_pri_sec_ynodal = size_rows;
 
+double** A = criarMatrizDinamica(3,3);
 
+A[0][0] = 5;
+A[0][1] =2;
+A[0][2]=1;
+A[1][0] =3;
+A[1][1] =1;
+A[1][2]=4;
+A[2][0] =1;
+A[2][1] =1;
+A[2][2]=3;
+
+double** LU = decomposicao_LU(A, 3);
+double** L = obter_matriz_L(LU, 3);
+double** U = obter_matriz_U(LU, 3);
 
 }
-
-
-
-
-
 
 double Pcalc(int size_ynodal, int size_dadosbarra, double** matrix_ynodal, double** matrix_dadosbarra) {
 
@@ -193,46 +206,90 @@ void destruirVetor(double* Vetor) {
 }
 
 
-double decomposicao_LU(double** matriz, int n) {
+double** decomposicao_LU(double** matriz, int n) {
     //matriz nxn
     double** a = criarMatrizDinamica(n, n);
-    double somatorio;
 
-    double maior = abs(a[1][1]);
-    int l = 1;
+    for (int k=0; k<n; k++){ //cria copia da matriz que a função recebe na matriz a
+        for (int i=0; i<n; i++ ){
+            a[k][i] = matriz[k][i];
+        }
+    };
+
+    double somatorio;
+    double pivo;
+    int l;
     int p;
     double aux;
+    double m;
+    for (int k=0; k<n; k++){
+        pivo = abs(a[k][k]);
+        l = k;
+        for (int i=k+1; i<n; i++ ){ //calculo de a(i,k)
+            if (abs(a[i][k]) > pivo){
+                pivo= a[i][k];
+                l=i;
+                p=l;
+            }
+        }
+        if (l != k){ //troca de linhas da matriz (linha p(k) e linha k)
+            for(int j=0; j<n; j++){
+                aux = a[k][j];
+                a[k][j] = a[p][j];
+                a[p][j] = aux;
+            }
+        }
+        for (int i=k+1; i<n; i++){
 
-    for (int k=1; k<=n; k++){
-        for (int i=k; i<=n; i++ ){ //calculo de a(i,k)
-            for (int j=1; j<=k-1; j++){
-                somatorio = a[i][j]*a[j][k];
-                a[i][k]=a[i][k] - somatorio;
-            }
-            if (abs(a[i][k]) > maior){ //achando o termo max|a(i,K)| de k<=i<=n
-                maior = a[i][k];
-                l = i;
-                p = l;
-            }
-            if (k != p){ //troca de linhas da matriz (linha p(k) e linha k)
-                for(int j=1; j<=n; j++){
-                    aux = a[k][j];
-                    a[k][j] = a[p][j];
-                    a[p][j] = aux;
-                }
+            m = a[i][k]/a[k][k];
+            a[i][k] = m;
+
+            for (int j=k+1 ; j<n; j++){
+                a[i][j] =a[i][j] - m*a[k][j];
             }
         }
     }
+/*
+    printf("%le \n", a[0][0]);
+    printf("%le \n", a[0][1]);
+    printf("%le \n", a[0][2]);
+    printf("%le \n", a[1][0]);
+    printf("%le \n", a[1][1]);
+    printf("%le \n", a[1][2]);
+    printf("%le \n", a[2][0]);
+    printf("%le \n", a[2][1]);
+    printf("%le \n", a[2][2]);*/
+
+return a;
+}
 
 
-    for (int k=1; k<=n; k++){
-        for (int j=k+1; j<=n; j++){
-            for (int i=1 ; i<=k-1; i++){
-                somatorio = a[k][i]*a[i][j];
-                a[k][j] = a[k][j] - somatorio;
-                a[j][k] = a[j][k] / a[k][k];
+double** obter_matriz_L(double** matriz, int n) {
+    //matriz nxn
+    double** L = criarMatrizDinamica(n, n);
+    for (int k=0; k<n; k++){
+        for (int i=0; i<n; i++ ){
+            if(k==i){
+                L[k][i] = 1;
+            }
+            if(k > i){
+                L[k][i] = matriz[k][i];
             }
         }
-    }
-return 2;
+    };
+    return L;
+}
+
+
+double** obter_matriz_U(double** matriz, int n) {
+    //matriz nxn
+    double** U = criarMatrizDinamica(n, n);
+    for (int k=0; k<n; k++){
+        for (int i=0; i<n; i++ ){
+            if(k <= i){
+                U[k][i] = matriz[k][i];
+            }
+        }
+    };
+    return U;
 }
