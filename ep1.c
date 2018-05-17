@@ -24,6 +24,10 @@ int main() {
     double** obter_matriz_L(double** matriz, int n);
     double** obter_matriz_U(double** matriz, int n);
     double* resolucao_sistema_linear(double** A, double* b, int n);
+    double* metodo_de_newton(double* x0, int n, double E);
+    double** calcularJacobianaTeste1(double* x);
+    double  calcularFuncaoTeste1(double* x);
+
     /* fim dos prototipos */
 
     int linhas = 77;
@@ -72,15 +76,35 @@ int main() {
     A[2][1] =1;
     A[2][2]=3;
 
+/*    for(int i=0; i<3; i++){
+        for(int j=0; j<3; j++){
+            printf("%le    ", A[i][j]);
+        }
+        printf("\n");
+    }*/
+
+    /*primeiro teste*/
+/*    double** Jx = criarMatrizDinamica(1,2);
+
+
+
     double* b = criarVetorDinamicoDouble(3);
     b[0] = 0;
     b[1] = -7;
     b[2] = -5;
 
-
-    /*double** L = obter_matriz_L(LU, 3);
-    double** U = obter_matriz_U(LU, 3);*/
     double* blebs = resolucao_sistema_linear(A, b, 3);
+
+    double* x = criarVetorDinamicoDouble(2);
+    x[0] = 1;
+    x[1] = 5;*/
+
+
+//    double** mip = calcularJacobianaTeste1(x);
+//    double xis =  calcularFuncaoTeste1(x);
+    //printf("%le", xis);
+
+/*    double* blub = metodo_de_newton(x, 2, 0.1);*/
 
 };
 
@@ -98,6 +122,7 @@ double Pcalc(int size_ynodal, int size_dadosbarra, double** matrix_ynodal, doubl
     return calculo;
 }
 
+/*cria uma matriz dinamica*/
 double** criarMatrizDinamica(int m, int n) {
     double **matriz;
     int i;
@@ -124,11 +149,7 @@ double** criarMatrizDinamica(int m, int n) {
     return matriz;
 }
 
-
-
-
-
-
+/*destroi uma matriz dinamica*/
 void destruirMatriz(double** Matriz, int linhas) {
     /* Desaloca espaco na memoria antes de fechar o programa.
     *  Sem isso, a memória RAM alocada no programa fica
@@ -145,9 +166,7 @@ void destruirMatriz(double** Matriz, int linhas) {
     free(Matriz);
 }
 
-
-/* ------------------------------- Leitura de arquivos ------------------------------- */
-
+/*le um arquivo txt e retorna uma matriz a partir do arquivo lido, cujos elementos foram retirados do arquivo*/
 double** lerMatrizDadosBarras(char *nomeArquivo, int *linhas, int *colunas, int *nao_nulos, int opcao) {
     char linha[512];
     double elemento1;
@@ -198,6 +217,7 @@ double** lerMatrizDadosBarras(char *nomeArquivo, int *linhas, int *colunas, int 
     return matriz;
 }
 
+/*cria um vetor de numeros inteiros*/
 int* criarVetorDinamicoInt(int N) {
     int *Vetor;
 
@@ -206,6 +226,7 @@ int* criarVetorDinamicoInt(int N) {
     return Vetor;
 }
 
+/*cria um vetor de numeros fracionarios*/
 double* criarVetorDinamicoDouble(double N) {
     double *Vetor;
 
@@ -214,16 +235,16 @@ double* criarVetorDinamicoDouble(double N) {
     return Vetor;
 }
 
-
+/*destroi um vetor de inteiros*/
 void destruirVetor(int* Vetor) {
-
     free(Vetor);
 }
 
-
+/*cálculo e retorno da matriz LU a partir da decomposição de uma matriz dada*/
 double** decomposicao_LU(double** matriz, int n, int p[]) {
     //matriz nxn
     double** a = criarMatrizDinamica(n, n);
+
 
     for (int k=0; k<n; k++){ //cria copia da matriz que a função recebe na matriz a
         for (int i=0; i<n; i++ ){
@@ -231,21 +252,25 @@ double** decomposicao_LU(double** matriz, int n, int p[]) {
         }
     };
 
+
     double somatorio;
     double pivo;
     int l;
     double aux;
     int troca;
     double m;
+
     for (int k=0; k<n; k++){
-        pivo = abs(a[k][k]);
+        pivo = fabs(a[k][k]);
         l = k;
         for (int i=k+1; i<n; i++ ){ //calculo de a(i,k)
-            if (abs(a[i][k]) > pivo){
+            if (fabs(a[i][k]) > pivo){
                 pivo= a[i][k];
                 l=i;
             }
         }
+
+
         if (l != k){ //troca de linhas da matriz (linha p(k) e linha k)
             troca = p[k];
             p[k] = p[l];
@@ -255,8 +280,10 @@ double** decomposicao_LU(double** matriz, int n, int p[]) {
                 aux = a[k][j];
                 a[k][j] = a[l][j];
                 a[l][j] = aux;
+
             }
         }
+
         for (int i=k+1; i<n; i++){
 
             m = a[i][k]/a[k][k];
@@ -268,10 +295,11 @@ double** decomposicao_LU(double** matriz, int n, int p[]) {
         }
     }
 
+
 return a;
 }
 
-
+/*dada a matriz LU, retorna a matriz L*/
 double** obter_matriz_L(double** matriz, int n) {
     //matriz nxn
     double** L = criarMatrizDinamica(n, n);
@@ -288,7 +316,7 @@ double** obter_matriz_L(double** matriz, int n) {
     return L;
 }
 
-
+/*dada a matriz LU, retorna a matriz U*/
 double** obter_matriz_U(double** matriz, int n) {
     //matriz nxn
     double** U = criarMatrizDinamica(n, n);
@@ -302,10 +330,9 @@ double** obter_matriz_U(double** matriz, int n) {
     return U;
 }
 
-
+/*calcula e retorna a solução de um sistema linear pelo metodo da decomposicao LU*/
 double* resolucao_sistema_linear(double** A, double* b, int n) {
     //matriz A nxn
-
 
     /*  Quero resolver o sistema Ax = b
         tenho que c = Pb, sendo P o vetor das permutacoes na decomposicao LU
@@ -320,7 +347,6 @@ double* resolucao_sistema_linear(double** A, double* b, int n) {
     double** LU = decomposicao_LU(A, n, p);
     double** L = obter_matriz_L(LU, n);
     double** U = obter_matriz_U(LU, n);
-
 
     double* c = criarVetorDinamicoDouble(n); //vetor de permutacoesdouble** a = criarMatrizDinamica(n, n);
     double* y = criarVetorDinamicoDouble(n);
@@ -342,6 +368,7 @@ double* resolucao_sistema_linear(double** A, double* b, int n) {
         y[i] = (c[i] - s)/L[i][i];
     };
 
+
     for(int i=n-1; i>=0; i--){ //Ux=y
         s=0;
         if (i!=n-1){
@@ -351,6 +378,7 @@ double* resolucao_sistema_linear(double** A, double* b, int n) {
         }
         x[i] = (y[i] - s)/(U[i][i]);
     }
+
 
     //desalocando as matrizes e vetores criados que nao serao mais utilizados
     free(y);
@@ -362,56 +390,22 @@ double* resolucao_sistema_linear(double** A, double* b, int n) {
     return x;
 }
 
-/* ISA! LÊ EU
 
-  Primeiro PS: dei um include <math.h>. Não adicionei mais código lá
-  em cima pra não bagunçar o que você já fez.
-
-  Não consegui testar o código, vou tentar fazer isso debuggar amanhã
-  Encontrei um problema que ainda não encontrei solução.
-  Para criar a matriz Jacobiana, vai precisar colocar como
-  parâmetro um array de funcoes, sendo cada termo uma derivada parcial
-  de f(x).
-
-  Para calcular a matriz F(x), também precisa colocar como parametro a
-  propria f(x).
-
-*/
-
-
-
-
-/*Meu problema aqui foi achar uma solução pro cálculo da matriz jacobiana
-  derivadas é um array de funcoes, sendo elas as derivadas parciais.
-*/
-double** calcularJacobiana(double* x, func derivadas, int n){
-  double** J = criarMatrizDinamica(n, n);
-  for(int i=0; i<n; i++){
-    for(int j=0; j<n; j++){
-      //Calcula a derivada_parcial[i] de x[j]
-      J[i][j] = derivadas[i](x[j])
-    }
-  }
-  return J;
-}
-
-/*Na equação, vamos usar a matriz -F(x). Ao invés de fazer outra funcao
-pra calcular -F(x), já vamos calcular ela aqui!*/
-double* calcular_menos_F(double* x, func f_de_x(), int n){
+/*Calcula um vetor negado: -F */
+double* negar_vetor(double* x, int n){
   double* F = criarVetorDinamicoDouble(n);
   for(int i=0; i<n; i++){
-    //Calcula a f(x) de x[i]
-    F[i] = (-1)*f_de_x(x[i]);
-  }
-  return F;
+    x[i] = (-1)*x[i]; //nega o valor da posição
+    }
+  return x;
 }
 
+
 /* Recebe um vetor e devolve o maior módulo */
-double max_valor(double* A, n){
+double max_valor(double* A, int n){
   double max = fabs(A[0]);
   for(int i=1; i<n; i++){
-    // fabs(x) = |x|
-    if(fabs(A[i]) > max){
+    if(fabs(A[i]) > max){ // fabs(x) = |x|
       max = fabs(A[i]);
     }
   }
@@ -419,9 +413,9 @@ double max_valor(double* A, n){
 }
 
 /* Recebe dois vetores do mesmo tamanho e retorna a soma deles*/
-double* soma_de_vetor(double* a, double* b, n){
-  double* s = criarVetorDinamicoInt(n);
-  for(int i=0, i<n, i++){
+double* soma_de_vetor(double* a, double* b, int n){
+  double* s = criarVetorDinamicoDouble(n);
+  for(int i=0; i<n; i++){
     s[i] = a[i] + b[i];
   }
   return s;
@@ -429,22 +423,48 @@ double* soma_de_vetor(double* a, double* b, n){
 
 /* Jc=-F -> c
    novo x = x+c */
-double* metodo_de_newton(double* x0, func funcao(), func derivadas(), int n, double E){
-  double erro = 1.0;
-  double* x=x0;
-  while(erro > E){
-    double* b = calcular_menos_F(x0, funcao(), n);
-    double** J = calcularJacobiana(x0, derivadas);
-    double* c = resolucao_sistema_linear(J, b, n);
-    erro = max_valor(c);
-    x = soma_de_vetor(x, c);
 
-    /*Fiquei na duvida se destruia as matrizes dentro ou fora do while
-    Pq ele vai destruir toda vez, mas em uma nova iteração ele aloca
-    mais espaço ou só substitui? */
-    destruirVetor(b);
-    destruirMatriz(J, n)
-    destruirVetor(c);
+
+/*calcula valor da funcao F(x) no teste 1*/
+double** calcularJacobianaTeste1(double* x){
+    /*F(x,y) = (x-2)²-(y-3)²
+    o jacobiano da função será: J(x,y) = [2x-4   2y-6]*/
+    double** J = criarMatrizDinamica(2,2);
+    J[0][0] = 2*x[0]-4;
+    J[0][1] = 2*x[1]-6;
+
+    return J;
+
+}
+
+double  calcularFuncaoTeste1(double* x){
+    /*F(x,y) = (x-2)²-(y-3)²*/
+    double F = -(x[0]-2)*(x[0]-2) - (x[1]-3)*(x[1]-3);
+    return F;
+}
+double* metodo_de_newton(double* x0, int n, double E){
+    /* J é a matriz jacobiana, recebida pela funcao
+       x0 é a solucao inicial do sistema a ser resolvido pelo metodo de newton
+       E é o erro maximo tolerado */
+
+  double erro = 1.0;
+  double* x = x0;
+  int interacoes = 0;
+
+  double** J = criarMatrizDinamica(2,2);
+  double* FF = criarVetorDinamicoDouble(2);
+  double F;
+  double* c;
+
+  while(erro > E){
+    J = calcularJacobianaTeste1(x);
+    F = calcularFuncaoTeste1(x);
+    FF[0] = F;
+    c = resolucao_sistema_linear(J, FF, 2);
+    erro = max_valor(c, 2);
+    interacoes++;
+    x = soma_de_vetor(x, c, 2);
   }
+
   return x;
 }
