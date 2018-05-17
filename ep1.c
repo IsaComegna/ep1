@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
+#include <math.h>
 
 /* variaveis globais */
 int size_rows;
@@ -359,4 +360,91 @@ double* resolucao_sistema_linear(double** A, double* b, int n) {
     destruirMatriz(L, n);
 
     return x;
+}
+
+/* ISA! LÊ EU
+
+  Primeiro PS: dei um include <math.h>. Não adicionei mais código lá
+  em cima pra não bagunçar o que você já fez.
+
+  Não consegui testar o código, vou tentar fazer isso debuggar amanhã
+  Encontrei um problema que ainda não encontrei solução.
+  Para criar a matriz Jacobiana, vai precisar colocar como
+  parâmetro um array de funcoes, sendo cada termo uma derivada parcial
+  de f(x).
+
+  Para calcular a matriz F(x), também precisa colocar como parametro a
+  propria f(x).
+
+*/
+
+
+
+
+/*Meu problema aqui foi achar uma solução pro cálculo da matriz jacobiana
+  derivadas é um array de funcoes, sendo elas as derivadas parciais.
+*/
+double** calcularJacobiana(double* x, func derivadas, int n){
+  double** J = criarMatrizDinamica(n, n);
+  for(int i=0; i<n; i++){
+    for(int j=0; j<n; j++){
+      //Calcula a derivada_parcial[i] de x[j]
+      J[i][j] = derivadas[i](x[j])
+    }
+  }
+  return J;
+}
+
+/*Na equação, vamos usar a matriz -F(x). Ao invés de fazer outra funcao
+pra calcular -F(x), já vamos calcular ela aqui!*/
+double* calcular_menos_F(double* x, func f_de_x(), int n){
+  double* F = criarVetorDinamicoDouble(n);
+  for(int i=0; i<n; i++){
+    //Calcula a f(x) de x[i]
+    F[i] = (-1)*f_de_x(x[i]);
+  }
+  return F;
+}
+
+/* Recebe um vetor e devolve o maior módulo */
+double max_valor(double* A, n){
+  double max = fabs(A[0]);
+  for(int i=1; i<n; i++){
+    // fabs(x) = |x|
+    if(fabs(A[i]) > max){
+      max = fabs(A[i]);
+    }
+  }
+  return max;
+}
+
+/* Recebe dois vetores do mesmo tamanho e retorna a soma deles*/
+double* soma_de_vetor(double* a, double* b, n){
+  double* s = criarVetorDinamicoInt(n);
+  for(int i=0, i<n, i++){
+    s[i] = a[i] + b[i];
+  }
+  return s;
+}
+
+/* Jc=-F -> c
+   novo x = x+c */
+double* metodo_de_newton(double* x0, func funcao(), func derivadas(), int n, double E){
+  double erro = 1.0;
+  double* x=x0;
+  while(erro > E){
+    double* b = calcular_menos_F(x0, funcao(), n);
+    double** J = calcularJacobiana(x0, derivadas);
+    double* c = resolucao_sistema_linear(J, b, n);
+    erro = max_valor(c);
+    x = soma_de_vetor(x, c);
+
+    /*Fiquei na duvida se destruia as matrizes dentro ou fora do while
+    Pq ele vai destruir toda vez, mas em uma nova iteração ele aloca
+    mais espaço ou só substitui? */
+    destruirVetor(b);
+    destruirMatriz(J, n)
+    destruirVetor(c);
+  }
+  return x;
 }
