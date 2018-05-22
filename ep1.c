@@ -33,7 +33,7 @@ int main() {
     double*  calcularFuncaoTeste1(double* x);
     double*  calcularFuncaoTeste2(double* x);
 //    double*  calcularFuncaoTeste3(double* x, int n);
-    double* calculo_fp(double* teta, double* V, int nPQ, int nPV, double** matriz_admitancias);
+    double* calculo_F(double* teta, double* V, int nPQ, int nPV, double** matriz_admitancias);
 
     /* fim dos prototipos */
 
@@ -125,6 +125,19 @@ int main() {
 
 //    double* fp = calculo_fp(x, x, 1, 1, Jx);
 
+
+    /*------------- Calculo rede 1: Stevenson -----------*/
+    /* a rede tem 5 barras, de 0 a 4
+       uma barra do tipo swing
+       3 barras do tipo PQ e 1 barra do tipo PV */
+    double* teta = criarVetorDinamicoDouble(5);
+    double* V = criarVetorDinamicoDouble(5);
+    for (int i=0; i<5; i++){
+        V[i] = 132790.562;
+    }
+    int nPQ = 3; //existem 3 barras PQ na rede
+    int nPV = 1; //existe 1 uma barra PV na rede
+    double* F = calculo_F(teta, V, nPQ, nPV, matriz_stevenson_ynodal);
 
 };
 
@@ -667,33 +680,263 @@ double* metodo_de_newton_teste(double* x0, int n, double E, int teste){
 
 
 
-double** criarMatrizG (double** matriz_admitancias, int n){
+double** criarMatrizG (int tipo, double** matriz_admitancias, int size){
+
+    double** G = criarMatrizDinamica(size, size);
+
+    int linha;
+    int coluna;
+    double elemento;
+    for (int i=0; i<size; i++){
+            linha = matriz_admitancias[i][0];
+            coluna = matriz_admitancias[i][1];
+            elemento = matriz_admitancias[i][2];
+            G[linha][coluna] = elemento;
+        }
 
 
-    double** G = criarMatrizDinamica(n, n);
+    /*for (int i=0; i<size_stevenson_ynodal ; i++){
+        for(int j=0; j<size_stevenson_ynodal; j++){
+            printf("%le \n ", matrizG[i][j]);
+        }
+        printf("\n \n \n");
+    }*/
+    if (tipo ==0 ){
+
+        G[0][0] =  8.30197e-003;
+        G[0][1] = 0.00000e+000 ;
+        G[0][2] = 0.00000e+000 ;
+        G[0][3] = -3.48050e-003 ;
+        G[0][4] = -2.64756e-003 ;
+
+        G[1][0] = 0.00000e+000;
+        G[1][1] =4.41207e-003;
+        G[1][2] =-1.76504e-003;
+        G[1][3] =-1.32378e-003 ;
+        G[1][4] =0.00000e+000;
+
+        G[2][0] = 0.00000e+000;
+        G[2][1] = -1.76504e-003;
+        G[2][2] = 8.98816e-003;
+        G[2][3] = -2.13582e-003;
+        G[2][4] = -3.48050e-003;
+
+        G[3][0] = -3.48050e-003 ;
+        G[3][1] = -1.32378e-003 ;
+        G[3][2] = -2.13582e-003 ;
+        G[3][3] = 8.26335e-003 ;
+        G[3][4] = 0.00000e+000;
+
+        G[4][0] = -2.64756e-003;
+        G[4][1] = 0.00000e+000 ;
+        G[4][2] = -3.48050e-003 ;
+        G[4][3] = 0.00000e+000 ;
+        G[4][04] = 7.35679e-003;
+    }
 
     return G;
 }
 
-double* calculo_fp(double* teta, double* V, int nPQ, int nPV, double** matriz_admitancias){
+
+double** criarMatrizB (int tipo, double** matriz_admitancias, int size){
+
+    double** B = criarMatrizDinamica(size, size);
+
+    int linha;
+    int coluna;
+    double elemento;
+    for (int i=0; i<size; i++){
+
+            linha = matriz_admitancias[i][0];
+            coluna = matriz_admitancias[i][1];
+            elemento = matriz_admitancias[i][3];
+            B[linha][coluna] = elemento;
+        }
+
+    /*for (int i=0; i<size ; i++){
+        for(int j=0; j<size; j++){
+            printf("%le \n ", matrizB[i][j]);
+        }
+        printf("\n \n \n");
+    }*/
+
+
+    if (tipo == 0){
+        B[0][0] = -2.58029e-002 ;
+        B[0][1] = 0.00000e+000 ;
+        B[0][2] = 0.00000e+000 ;
+        B[0][3] = 1.41465e-002 ;
+        B[0][4] = 1.05902e-002;
+
+        B[1][0] = 0.00000e+000 ;
+        B[1][1] = -1.27872e-002 ;
+        B[1][2] = 7.06016e-003 ;
+        B[1][3] = 5.29512e-003 ;
+        B[1][4] = 0.00000e+000;
+
+        B[2][0] = 0.00000e+000 ;
+        B[2][1] = 7.06016e-003 ;
+        B[2][2] = -3.02904e-002 ;
+        B[2][3] = 8.46267e-003 ;
+        B[2][4] = 1.41465e-002;
+
+        B[3][0] = 1.41465e-002 ;
+        B[3][1] = 5.29512e-003 ;
+        B[3][2] = 8.46267e-003 ;
+        B[3][3] = -2.85055e-002 ;
+        B[3][4] = 0.00000e+000;
+
+        B[4][0] = 1.05902e-002 ;
+        B[4][1] = 0.00000e+000 ;
+        B[4][2] = 1.41465e-002 ;
+        B[4][3] = 0.00000e+000 ;
+        B[4][4] = -2.52358e-002;
+    }
+
+    return B;
+}
+
+
+
+double* calculo_F(double* teta, double* V, int nPQ, int nPV, double** matriz_admitancias){
     /*  teta é o vetor dos tetas, V é o vetor das tensoes
         nPQ é o numero de barras PQ
-        nPV é o numero de barras PV */
+        nPV é o numero de barras PV
+        nS é o numero de barras swing */
+
+    double** G = criarMatrizG(0, matriz_admitancias, size_stevenson_dadosbarra);
+    double** B = criarMatrizB(0, matriz_admitancias, size_stevenson_dadosbarra);
+
+    /* --- Para Stevenson ---- */
+    /* irei reorganizar a matriz ynodal e de dados das barras, para a ordem ser
+        primeiro as barras pq, depois as barras pv e depois a barra swing
+        ou seja, mapeio as barras como:
+        [0 1 2 3 4] -> [4 0 3 1 2], ou: a barra 0 vira a barra 4,
+        a barra 1 vira a barra 0 e assim por diante*/
 
     double* fp = criarVetorDinamicoDouble(1);
     double teta_kj;
     double soma;
 
-    //printf("%i", size_stevenson_ynodal);
+    //F é [fp1, fp2, fp3, fp4, fq1, fq2, fq3]
+    //a barra 0 é do tipo swing e nao contribui para o sistema de equações
+    double* F = criarVetorDinamicoDouble(2*nPQ + nPV); //matriz F
 
-    for (int k=0; k<nPQ+nPV; k++){
+    double Pesp = 60000000; //P esperado para o calculo da barra PV
+
+    /* calculos de fp em F */
+    for (int j=0; j<nPQ+nPV; j++){
         soma=0;
-        for (int j=0; j< size_stevenson_ynodal; j++){
-            teta_kj = teta(j) - teta(i);
-            soma = soma + V(j)*(G[i][j]*cos(teta_kj) - B[i][j]*sin(teta_kj));
+        for (int k=0; k < size_stevenson_dadosbarra; k++){ //uso todas as barras para calcular fp
+                teta_kj = teta[k] - teta[j];
+                soma = soma + V[k]*(G[j][k]*cos(teta_kj) - B[j][k]*sin(teta_kj));
+
         }
-        fp[i] = V[i]*soma;
+        F[j] = V[j]*soma; //+ V[k]*V[k]*G[k][k];
+    }
+
+    for(int i=0; i<nPV; i++){ //fp(j) = fp(j) - Pesp para as barras PV
+        F[nPQ + i] = F[nPQ + nPV] - Pesp; //começa na barra PV
+    }
+
+    /* calculos de fq em F */
+    for (int i=0; i<nPQ; i++){
+        soma =0;
+        for (int j=0; j<size_stevenson_dadosbarra; j++){ //uso todas as barras para calcular fq
+            teta_kj = teta[j] - teta[i];
+            soma = soma + V[j]*(G[i][j]*sin(teta_kj)+B[i][j]*cos(teta_kj));
+        }
+        F[nPQ+nPV+i] = -V[i]*soma;
     }
 
     return fp;
 }
+
+double** calculo_J(double* teta, double* V, int nPQ, int nPV, double** matriz_admitancias){
+
+    int size_barra = size_stevenson_dadosbarra; //para o caso 1 de stevenson
+
+    double** G = criarMatrizG(0, matriz_admitancias, size_barra);
+    double** B = criarMatrizB(0, matriz_admitancias, size_barra);
+
+    double teta_kj;
+    double soma;
+    //J é [dfp1/dt1 dfp1/dt2 dfp1/dt3 dfp1/dt4 dfp1/dV1 df1/dv2 dfp1/dv3];
+    double** J = criarMatrizDinamica(2*nPQ + nPV,2*nPQ + nPV ); //matriz do jacobiano
+    int k;
+
+    /*fp em J*/
+    for (int i=0; i< nPQ + nPV; i++){
+        soma = 0;
+        for(int j=0; j<(2*nPQ + nPV); j++){
+            if (j ==i){
+                soma =0;
+                for (k=0; k<size_barra; k++){
+                    if (k != i){
+                        teta_kj = teta[k] - teta[i];
+                        soma = soma + V[k]*(G[i][k]*sin(teta_kj)+B[i][k]*cos(teta_kj));
+                    }
+                }
+                J[i][j] = soma*V[i];
+            }
+            else if(j== nPQ+nPV + i){
+                soma = 0;
+                for (k=0; k<size_barra; k++){
+                    if  (k != i){
+                        teta_kj = teta[k]-teta[i];
+                        soma = soma + V[k]*(G[i][k]*cos(teta_kj)-B[i][k]*sin(teta_kj));
+                    }
+                }
+                J[i][j] = soma + 2*V[i]*G[i][i];}
+            else if (j<= nPQ+nPV + i){
+                k = j;
+                teta_kj = teta[k] - teta[i];
+                J[i][j] = -V[i]*V[k]*(G[i][k]*sin(teta_kj)+B[i][k]*cos(teta_kj));
+            }
+            else{
+                k = j - nPQ -nPV;
+                teta_kj = teta[k] - teta[i];
+                J[i][j] = V[i]*(G[i][k]*cos(teta_kj)-B[i][k]*sin(teta_kj));
+            }
+        }
+    }
+
+    /*fq em J*/
+    for (int i=0; i< nPQ; i++){
+        soma = 0;
+        for (int j=0; j<2*nPQ + nPV; j++){
+            if (j == i){
+                soma = 0;
+                for (k=0; k<size_barra; k++){
+                    if (k != i){
+                        teta_kj = teta[k] - teta[i];
+                        soma = soma + V[k]*(G[i][k]*cos(teta_kj)-B[i][k]*sin(teta_kj));
+                    }
+                }
+                J[nPQ+nPV+i][j] = soma*V[i];
+            }
+            else if(j== (nPQ+nPV+i)){
+                soma = 0;
+                for (k=0; k<size_barra; k++){
+                    if (k!=i){
+                        teta_kj = teta[k] - teta[i];
+                        soma = soma + V[k]*(G[i][k]*sin(teta_kj)+B[i][k]*cos(teta_kj));
+                    }
+                }
+                J[nPQ+nPV+i][j] = -soma  - 2*V[i]*B[i][i];
+            }
+            else if (j<=(nPQ+nPV)){
+                k = j;
+                teta_kj = teta[k] - teta[i];
+                J[nPQ+nPV+i][j] = -V[i]*V[k]*(G[i][k]*cos(teta_kj)-B[i][k]*sin(teta_kj));
+            }
+            else{
+                k = j-nPQ-nPV;
+                teta_kj = teta[k] - teta[i];
+                J[nPQ+nPV+i][j] = -V[i]*(G[i][k]*sin(teta_kj)+B[i][k]*cos(teta_kj));
+
+            }
+        }
+    }
+    return J;
+};
