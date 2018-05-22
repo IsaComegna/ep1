@@ -32,7 +32,11 @@ int main() {
     double** calcularJacobianaTeste3(double* x, int n);
     double*  calcularFuncaoTeste1(double* x);
     double*  calcularFuncaoTeste2(double* x);
+<<<<<<< HEAD
     double*  calcularFuncaoTeste3(double* x, int n);
+=======
+    double* calculo_fp(double* teta, double* V, int nPQ, int nPV, double** matriz_admitancias);
+>>>>>>> codando
 
     /* fim dos prototipos */
 
@@ -46,6 +50,7 @@ int main() {
     char *stevenson_dadosbarra = "../EP1/1_Stevenson/1_Stevenson_DadosBarras.txt";
     double** matriz_stevenson_dados_barra = lerMatrizDadosBarras(stevenson_dadosbarra, &linhas, &colunas , &nao_nulos, 0);
     size_stevenson_dadosbarra = size_rows;
+
     double** matriz_stevenson_ynodal = lerMatrizDadosBarras(stevenson_ynodal, &linhas, &colunas, &nao_nulos, 1);
     size_stevenson_ynodal = size_rows;
 
@@ -82,24 +87,8 @@ int main() {
     A[2][1] =1;
     A[2][2]=3;
 
-/*    for(int i=0; i<3; i++){
-        for(int j=0; j<3; j++){
-            printf("%le    ", A[i][j]);
-        }
-        printf("\n");
-    }*/
 
-    /*primeiro teste*/
-    /*double** Jx = criarMatrizDinamica(1,2);
-
-
-
-    double* b = criarVetorDinamicoDouble(3);
-    b[0] = 0;
-    b[1] = -7;
-    b[2] = -5;
-
-    double* blebs = resolucao_sistema_linear(A, b, 3);*/
+    double* blebs = resolucao_sistema_linear(A, b, 3);
 //--------TESTE 1--------------------------------------------------------------
     printf("Rodando Teste 1...\n");
     double* x1 = criarVetorDinamicoDouble(2);
@@ -111,24 +100,21 @@ int main() {
     printf("Resultado Teste 1:\n");
     imprimirVetor(teste1, 2);
 
-//--------TESTE 2---------------------------------------------------------------
-    // printf("Rodando Teste 2...\n");
-    // double* x2 = criarVetorDinamicoDouble(4);
-    // x2[0] = 1;
-    // x2[1] = 1;
-    // x2[2] = 1;
-    // x2[3] = 1;
+//-----------------------------------------------------------------------TESTE 2
+    /*double* x = criarVetorDinamicoDouble(4);
+    x[0] = 1;
+    x[1] = 1;
+    x[2] = 1;
+    x[3] = 1;
 
-    // double* teste2 = metodo_de_newton_teste(x2, 4, 0.1, 2);
+    //double* teste2 = metodo_de_newton2(x, 4, 0.1);
 
-    // printf("Resultado Teste 2:\n");
-    // imprimirVetor(teste2, 4);
-
-//--------TESTE 3---------------------------------------------------------------
-    // printf("Rodando Teste 3...\n");
-    // int N = 8;
-
-    // double* x3 = criarVetorDinamicoDouble(N);
+/*
+    printf("Resultado Teste 2:\n");
+    printf("%le \n", teste2[0]);
+    printf("%le \n", teste2[1]);
+    printf("%le \n", teste2[2]);
+    printf("%le \n", teste2[3]);*/
 
     // /*Criando vetor unitário*/
     // for(int i=0; i<N; i++){
@@ -136,9 +122,12 @@ int main() {
     // }
 
     // double* teste3 = metodo_de_newton_teste(x3, N, 0.1, 3);
-    
+
     // printf("Resultado Teste 3:\n");
     // imprimirVetor(teste3, N);
+
+
+    double* fp = calculo_fp(x, x, 1, 1, Jx);
 
 
 };
@@ -232,21 +221,27 @@ double** lerMatrizDadosBarras(char *nomeArquivo, int *linhas, int *colunas, int 
     *linhas = L;
     *colunas = C;
     size_rows = L;
+
+    int iter =0;
     matriz = criarMatrizDinamica(L, C);
     while(fgets(linha, sizeof(linha), arquivo) != NULL) { /* pega uma linha de até 512 caracteres. Null quando acabar as linhas */
 
-        if (opcao ==0){ //matriz dos dados da barra
-            sscanf(linha, "%d %le %le %le %le", &i, &elemento1, &elemento2, &elemento3, &elemento4);
-            matriz[i][0] = elemento1;
-            matriz[i][1] = elemento2;
-            matriz[i][2] = elemento3;
-            matriz[i][3] = elemento4;
-        } else { //matriz das admitancias Ynodal
-            sscanf(linha, "%d %le %le %le", &i, &elemento1, &elemento2, &elemento3);
-            matriz[i][0] = elemento1;
-            matriz[i][1] = elemento2;
-            matriz[i][2] = elemento3;
+        if (opcao == 0){ //matriz dos dados da barra
+            sscanf(linha, "%d %d %le %le %le", &i, &j, &elemento2, &elemento3, &elemento4);
+            matriz[iter][0] = i;
+            matriz[iter][1] = j;
+            matriz[iter][2] = elemento2;
+            matriz[iter][3] = elemento3;
+            matriz[iter][4] = elemento4;
         }
+        if (opcao ==1) { //matriz das admitancias Ynodal
+            sscanf(linha, "%d %d %le %le", &i, &j, &elemento1, &elemento2);
+            matriz[iter][0] = i;
+            matriz[iter][1] = j;
+            matriz[iter][2] = elemento1;
+            matriz[iter][3] = elemento2;
+        }
+        iter++;
     }
     fclose(arquivo);
     return matriz;
@@ -594,7 +589,7 @@ double*  calcularFuncaoTeste2(double* x){
     return F;
 }
 
-double*  calcularFuncaoTeste3(double* x, int n){    
+double*  calcularFuncaoTeste3(double* x, int n){
     /*F1(x) = x[i-1] + 2x[i] - x[i+1] - e^x[i]/n^2
     x[-1]= 0 ; x[n] = 0
     */
