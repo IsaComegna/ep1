@@ -667,3 +667,36 @@ double* metodo_de_newton_teste(double* x0, int n, double E, int teste){
         return x;
     }
 }
+
+
+
+double** criarMatrizG (double** matriz_admitancias, int n){
+
+
+    double** G = criarMatrizDinamica(n, n);
+
+    return G;
+}
+
+double* calculo_fp(double* teta, double* V, int nPQ, int nPV, double** matriz_admitancias){
+    /*  teta é o vetor dos tetas, V é o vetor das tensoes
+        nPQ é o numero de barras PQ
+        nPV é o numero de barras PV */
+
+    double* fp = criarVetorDinamicoDouble(1);
+    double teta_kj;
+    double soma;
+
+    printf("%i", size_stevenson_ynodal);
+    /*
+    for (int k=0; k<nPQ+nPV; k++){
+        soma=0;
+        for (int j=0; j< size_stevenson_ynodal; j++){
+            teta_kj = teta(j) - teta(i);
+            soma = soma + V(j)*(G[i][j]*cos(teta_kj) - B[i][j]*sin(teta_kj));
+        }
+        fp[i] = V[i]*soma;
+    }*/
+
+    return fp;
+}
