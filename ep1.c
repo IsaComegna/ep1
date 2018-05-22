@@ -91,10 +91,10 @@ int main() {
     x1[0] = 1;
     x1[1] = 5;
 
-    double* teste1 = metodo_de_newton_teste(x1, 2, 0.00001, 1);
+    // double* teste1 = metodo_de_newton_teste(x1, 2, 0.00001, 1);
 
-    printf("Resultado Teste 1:\n");
-    imprimirVetor(teste1, 2);
+    // printf("Resultado Teste 1:\n");
+    // imprimirVetor(teste1, 2);
 
 //-----------------------------------------------------------------------TESTE 2
     /*double* x = criarVetorDinamicoDouble(4);
@@ -103,6 +103,9 @@ int main() {
     x[2] = 1;
     x[3] = 1;
 
+//--------TESTE 3---------------------------------------------------------------
+    // printf("Rodando Teste 3...\n");
+    // int N = 7;
     //double* teste2 = metodo_de_newton2(x, 4, 0.1);
 
 /*
@@ -116,7 +119,8 @@ int main() {
     // for(int i=0; i<N; i++){
     //     x3[i] = 1;
     // }
-
+    // // double wait = 2 - ( exp(x3[2]) / (N*N) );
+    // // printf("wait = %le\n", wait);
     // double* teste3 = metodo_de_newton_teste(x3, N, 0.1, 3);
 
     // printf("Resultado Teste 3:\n");
@@ -281,7 +285,11 @@ void destruirVetor(int* Vetor) {
 
 void imprimirVetor(double* v, int n){
     for(int i=0; i<n; i++){
-        printf("| %le |   %d\n", v[i], i);
+        if(v[i]>=0){
+            printf("|  %le  |   %d\n", v[i], i);
+        } else {
+        printf("| %le  |   %d\n", v[i], i);
+        }
     }
 }
 
@@ -290,7 +298,10 @@ void imprimirMatriz(double** A, int linhas, int colunas){
     for(int i=0; i<linhas; i++){
         printf("| ");
         for(int j=0; j<colunas; j++){
-            printf("  %le  ", A[i][j]);
+            if(A[i][j]>=0){
+                printf(" ");
+            }
+            printf(" %le  ", A[i][j]);
         }
         printf("  |  %d\n", i);
     }
@@ -396,13 +407,15 @@ double* resolucao_sistema_linear(double** A, double* b, int n) {
         Ux=y
     */
 
-    int* p = criarVetorDinamicoInt(3); //vetor de permutacoes
-    for(int i=0; i<3 ; i++){
+    int* p = criarVetorDinamicoInt(n); //vetor de permutacoes
+    for(int i=0; i<n ; i++){
         p[i] = i;
     }
+
     double** LU = decomposicao_LU(A, n, p);
     double** L = obter_matriz_L(LU, n);
     double** U = obter_matriz_U(LU, n);
+
 
     double* c = criarVetorDinamicoDouble(n); //vetor de permutacoesdouble** a = criarMatrizDinamica(n, n);
     double* y = criarVetorDinamicoDouble(n);
@@ -424,12 +437,11 @@ double* resolucao_sistema_linear(double** A, double* b, int n) {
         y[i] = (c[i] - s)/L[i][i];
     };
 
-
     for(int i=n-1; i>=0; i--){ //Ux=y
         s=0;
         if (i!=n-1){
             for(int j=i+1; j<n; j++){
-                s = s + U[i][j]*y[j];
+                s = s + U[i][j]*x[j];
             }
         }
         x[i] = (y[i] - s)/(U[i][i]);
@@ -530,17 +542,6 @@ double** calcularJacobianaTeste2(double* x){
     J[3][2] = 2*x[2];
     J[3][3] = 0;
 
-
-    // printf("Jacobiana:\n");
-    // for(int i=0; i<4; i++){
-    //     printf("[");
-    //     for(int j=0; j<4; j++){
-    //         printf("%le,   ", J[i][j]);
-    //     }
-    //     printf("]\n");
-    // }
-
-
     return J;
 
 }
@@ -563,14 +564,8 @@ double** calcularJacobianaTeste3(double* x, int n){
     J[n-1][n-1] = 2 - ( exp(x[n-1]) / n2 );
 
     printf("Jacobiana:\n");
-    for(int i=0; i < n; i++){
-        printf("|");
-        for(int j=0; j < n; j++){
-            printf("%le  ", J[i][j]);
-        }
-        printf("| %d\n", i);
-    }
-
+    imprimirMatriz(J, n, n);
+    printf("Jacobiana deu bom\n");
     return J;
 
 }*/
@@ -605,17 +600,16 @@ double*  calcularFuncaoTeste3(double* x, int n){
     */
     /*printf("n = %d\n", n);
     double* F = criarVetorDinamicoDouble(n);
+    double n2 = ((n+1)*(n+1));
 
-    F[0] = 2*x[0] - x[1] - ( exp(x[0]) / (n*n) );
+    F[0] = 2*x[0] - x[1] - ( exp(x[0]) / n2 );
     for(int i = 1; i< n-1; i++){
-        F[i] = -x[i-1] + 2*x[i] - x[i+1] - ( exp(x[i]) / (n*n) );
+        F[i] = -x[i-1] + 2*x[i] - x[i+1] - ( exp(x[i]) / n2 );
     }
-    F[n-1] = -x[n-2] + 2*x[n-1] - ( exp(x[n-1]) / (n*n) );
+    F[n-1] = -x[n-2] + 2*x[n-1] - ( exp(x[n-1]) / n2 );
 
-
-    for(int i=0; i<n; i++){
-        printf("|%le|  %d\n", F[i], i);
-    }
+    printf("F(x):\n");
+    imprimirVetor(F, n);
 
 
     return F;
@@ -645,23 +639,14 @@ double* metodo_de_newton_teste(double* x0, int n, double E, int teste){
 
     if(teste == 2){
         while(erro > E){
-            // printf("Iteracao: %d\n", iteracoes);
             J = calcularJacobianaTeste2(x);
-            // printf("Jacobiana:\n");
-            // imprimirMatriz(J, n, n);
             F = calcularFuncaoTeste2(x);
-            // printf("\nF(x):\n");
-            // imprimirVetor(F, n);
             c = resolucao_sistema_linear(J, F, n);
-            // printf("\nc:\n");
-            // imprimirVetor(c, n);
             erro = max_valor(c, n);
-            // printf("\nErro: %le\n", erro);
             iteracoes++;
             x = soma_de_vetor(x, c, n);
-            // printf("x:\n");
-            // imprimirVetor(x, n);
         }
+        printf("iteracoes: %d\n", iteracoes);
         return x;
     }
 /*
@@ -670,9 +655,13 @@ double* metodo_de_newton_teste(double* x0, int n, double E, int teste){
             J = calcularJacobianaTeste3(x, n);
             F = calcularFuncaoTeste3(x, n);
             c = resolucao_sistema_linear(J, F, n);
+            // printf("c:\n");
+            // imprimirVetor(c, n);
             erro = max_valor(c, n);
             iteracoes++;
             x = soma_de_vetor(x, c, n);
+            // printf("x:\n");
+            // imprimirVetor(x, n);
         }
         return x;
     }*/
