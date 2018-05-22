@@ -29,14 +29,11 @@ int main() {
     double* metodo_de_newton_teste(double* x0, int n, double E, int teste);
     double** calcularJacobianaTeste1(double* x);
     double** calcularJacobianaTeste2(double* x);
-    double** calcularJacobianaTeste3(double* x, int n);
+    //double** calcularJacobianaTeste3(double* x, int n);
     double*  calcularFuncaoTeste1(double* x);
     double*  calcularFuncaoTeste2(double* x);
-<<<<<<< HEAD
-    double*  calcularFuncaoTeste3(double* x, int n);
-=======
+//    double*  calcularFuncaoTeste3(double* x, int n);
     double* calculo_fp(double* teta, double* V, int nPQ, int nPV, double** matriz_admitancias);
->>>>>>> codando
 
     /* fim dos prototipos */
 
@@ -88,9 +85,8 @@ int main() {
     A[2][2]=3;
 
 
-    double* blebs = resolucao_sistema_linear(A, b, 3);
 //--------TESTE 1--------------------------------------------------------------
-    printf("Rodando Teste 1...\n");
+    /*printf("Rodando Teste 1...\n");
     double* x1 = criarVetorDinamicoDouble(2);
     x1[0] = 1;
     x1[1] = 5;
@@ -124,10 +120,10 @@ int main() {
     // double* teste3 = metodo_de_newton_teste(x3, N, 0.1, 3);
 
     // printf("Resultado Teste 3:\n");
-    // imprimirVetor(teste3, N);
+    // imprimirVetor(teste3, N); */
 
 
-    double* fp = calculo_fp(x, x, 1, 1, Jx);
+//    double* fp = calculo_fp(x, x, 1, 1, Jx);
 
 
 };
@@ -538,9 +534,10 @@ double** calcularJacobianaTeste2(double* x){
 
 
 /*calcula valor da Jacobiana J(x) no teste 3*/
+/*
 double** calcularJacobianaTeste3(double* x, int n){
     /*F1(x) = x[i-1] + 2x[i] - x[i+1] - e^x[i]/n^2*/
-    double n2 = ((n+1)*(n+1));
+/*    double n2 = ((n+1)*(n+1));
     double** J = criarMatrizDinamica(n,n);
     J[0][0] = 2 - ( exp(x[0]) / n2 );
     J[0][1] = -1;
@@ -563,7 +560,7 @@ double** calcularJacobianaTeste3(double* x, int n){
 
     return J;
 
-}
+}*/
 
 double*  calcularFuncaoTeste1(double* x){
     /*F(x,y) = (x-2)²-(y-3)²*/
@@ -588,12 +585,12 @@ double*  calcularFuncaoTeste2(double* x){
 
     return F;
 }
-
+/*
 double*  calcularFuncaoTeste3(double* x, int n){
     /*F1(x) = x[i-1] + 2x[i] - x[i+1] - e^x[i]/n^2
     x[-1]= 0 ; x[n] = 0
     */
-    printf("n = %d\n", n);
+    /*printf("n = %d\n", n);
     double* F = criarVetorDinamicoDouble(n);
 
     F[0] = 2*x[0] - x[1] - ( exp(x[0]) / (n*n) );
@@ -609,7 +606,7 @@ double*  calcularFuncaoTeste3(double* x, int n){
 
 
     return F;
-}
+}*/
 
 double* metodo_de_newton_teste(double* x0, int n, double E, int teste){
 
@@ -654,7 +651,7 @@ double* metodo_de_newton_teste(double* x0, int n, double E, int teste){
         }
         return x;
     }
-
+/*
     if(teste == 3){
         while(erro > E){
             J = calcularJacobianaTeste3(x, n);
@@ -665,7 +662,7 @@ double* metodo_de_newton_teste(double* x0, int n, double E, int teste){
             x = soma_de_vetor(x, c, n);
         }
         return x;
-    }
+    }*/
 }
 
 
@@ -687,8 +684,8 @@ double* calculo_fp(double* teta, double* V, int nPQ, int nPV, double** matriz_ad
     double teta_kj;
     double soma;
 
-    printf("%i", size_stevenson_ynodal);
-    /*
+    //printf("%i", size_stevenson_ynodal);
+
     for (int k=0; k<nPQ+nPV; k++){
         soma=0;
         for (int j=0; j< size_stevenson_ynodal; j++){
@@ -696,7 +693,7 @@ double* calculo_fp(double* teta, double* V, int nPQ, int nPV, double** matriz_ad
             soma = soma + V(j)*(G[i][j]*cos(teta_kj) - B[i][j]*sin(teta_kj));
         }
         fp[i] = V[i]*soma;
-    }*/
+    }
 
     return fp;
 }
