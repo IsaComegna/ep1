@@ -17,8 +17,8 @@ int main() {
     void destruirMatriz(double** Matriz, int linhas);
     double** lerMatrizDadosBarras(char *nomeArquivo, int *linhas, int *colunas, int *nao_nulos, int opcao);
     void destruirVetor(int* Vetor);
-    int* criarVetorDinamicoInt(int N) ;
-    double* criarVetorDinamicoDouble(double N) ;
+    int* criarVetorDinamicoInt(int N);
+    double* criarVetorDinamicoDouble(double N);
     void imprimirVetor(double* v, int n);
     void imprimirMatriz(double** A, int linhas, int colunas);
     double fpPQ(int size_ynodal, int size_dadosbarra, double** matrix_ynodal, double** matrix_dadosbarra);
@@ -32,14 +32,14 @@ int main() {
     //double** calcularJacobianaTeste3(double* x, int n);
     double*  calcularFuncaoTeste1(double* x);
     double*  calcularFuncaoTeste2(double* x);
-//    double*  calcularFuncaoTeste3(double* x, int n);
-    double* calculo_F(double* teta, double* V, int nPQ, int nPV, double** matriz_admitancias);
+    //double*  calcularFuncaoTeste3(double* x, int n);
+    double* metodo_de_newton_stevenson(double* teta, double* V, int nPQ, int nPV, double** matriz_admitancias);
 
     /* fim dos prototipos */
 
     int linhas = 77;
     int colunas = 6;
-    int nao_nulos = 310 ;
+    int nao_nulos = 310;
 
     /*lendo os arquivos txt disponibilizados e criando as respectivas matrizes*/
 
@@ -71,18 +71,6 @@ int main() {
     size_pri_sec_dadosbarra = size_rows;
     double** matriz_distrib_pri_sec_ynodal = lerMatrizDadosBarras(distrib_pri_sec_ynodal, &linhas, &colunas, &nao_nulos, 1);
     size_pri_sec_ynodal = size_rows;
-
-    double** A = criarMatrizDinamica(3,3);
-
-    A[0][0] = 5;
-    A[0][1] =2;
-    A[0][2]=1;
-    A[1][0] =3;
-    A[1][1] =1;
-    A[1][2]=4;
-    A[2][0] =1;
-    A[2][1] =1;
-    A[2][2]=3;
 
 
 //--------TESTE 1--------------------------------------------------------------
@@ -141,9 +129,8 @@ int main() {
     }
     int nPQ = 3; //existem 3 barras PQ na rede
     int nPV = 1; //existe 1 uma barra PV na rede
-    double* F = calculo_F(teta, V, nPQ, nPV, matriz_stevenson_ynodal);
-
-};
+    double* x_st = metodo_de_newton_stevenson(teta, V, nPQ, nPV, matriz_stevenson_ynodal);
+}
 
 double Pcalc(int size_ynodal, int size_dadosbarra, double** matrix_ynodal, double** matrix_dadosbarra) {
 
@@ -667,8 +654,6 @@ double* metodo_de_newton_teste(double* x0, int n, double E, int teste){
     }*/
 }
 
-
-
 double** criarMatrizG (int tipo, double** matriz_admitancias, int size){
 
     double** G = criarMatrizDinamica(size, size);
@@ -928,4 +913,27 @@ double** calculo_J(double* teta, double* V, int nPQ, int nPV, double** matriz_ad
         }
     }
     return J;
+};
+
+
+double* metodo_de_newton_stevenson(double* teta, double* V, int nPQ, int nPV, double** matriz_admitancias) {
+
+    double erro = 1.0;
+    double* x;
+    int iteracoes = 1;
+
+    double** J;
+    double* F;
+    double* c;
+    double E = 0.01; //defino arbitrariamente
+
+    while(erro > E){
+        J = calculo_J(teta, V, nPQ, nPV, matriz_admitancias);
+        F = calculo_F(teta, V, nPQ, nPV, matriz_admitancias);
+        c = resolucao_sistema_linear(J, F, 2*nPQ + nPV);
+        erro = max_valor(c, 2*nPQ + nPV);
+        iteracoes++;
+        x = soma_de_vetor(x, c, 2*nPQ + nPV);
+    }
+    return x;
 };
