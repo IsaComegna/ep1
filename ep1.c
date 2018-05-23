@@ -6,9 +6,6 @@
 /* variaveis globais */
 int size_rows;
 int size_stevenson_ynodal, size_stevenson_dadosbarra;
-int size_reticulada_ynodal, size_reticulada_dadosbarra;
-int size_primario_ynodal, size_primario_dadosbarra;
-int size_pri_sec_ynodal, size_pri_sec_dadosbarra;
 
 int main() {
 
@@ -32,7 +29,6 @@ int main() {
 	double*  calcularFuncaoTeste1(double* x);
 	double*  calcularFuncaoTeste2(double* x);
 	double* metodo_de_newton_stevenson(double* teta, double* V, int nPQ, int nPV, double** matriz_admitancias);
-
 	/* fim dos prototipos */
 
 	int linhas = 77;
@@ -49,29 +45,8 @@ int main() {
 	double** matriz_stevenson_ynodal = lerMatrizDadosBarras(stevenson_ynodal, &linhas, &colunas, &nao_nulos, 1);
 	size_stevenson_ynodal = size_rows;
 
-	char *reticulada_ynodal = "../EP1/2_Reticulada/2_Reticulada_Ynodal.txt";
-	char *reticulada_dadosbarra = "../EP1/2_Reticulada/2_Reticulada_DadosBarras.txt";
-	double** matriz_reticulada_dados_barra = lerMatrizDadosBarras(reticulada_dadosbarra, &linhas, &colunas , &nao_nulos, 0);
-	size_reticulada_dadosbarra = size_rows;
-	double** matriz_reticulada_ynodal = lerMatrizDadosBarras(reticulada_ynodal, &linhas, &colunas, &nao_nulos, 1);
-	size_reticulada_ynodal = size_rows;
 
-	char *distrib_primaria_ynodal = "../EP1/3_Distribuicao_Primaria/3_Distribuicao_Primaria_Ynodal.txt";
-	char *distrib_primaria_dadosbarra = "../EP1/3_Distribuicao_Primaria/3_Distribuicao_Primaria_DadosBarras.txt";
-	double** matriz_distrib_primaria_dados_barra = lerMatrizDadosBarras(distrib_primaria_dadosbarra, &linhas, &colunas , &nao_nulos, 0);
-	size_primario_dadosbarra = size_rows;
-	double** matriz_distrib_primaria_ynodal = lerMatrizDadosBarras(distrib_primaria_ynodal, &linhas, &colunas, &nao_nulos, 1);
-	size_primario_ynodal = size_rows;
-
-	char *distrib_pri_sec_ynodal = "../EP1/4_Distribuicao_Pri_Sec/4_Distribuicao_Primaria_Secundaria_Ynodal.txt";
-	char *distrib_pri_sec_dadosbarra = "../EP1/4_Distribuicao_Pri_Sec/4_Distribuicao_Primaria_Secundaria_DadosBarras.txt";
-	double** matriz_distrib_pri_sec_dados_barra = lerMatrizDadosBarras(distrib_pri_sec_dadosbarra, &linhas, &colunas , &nao_nulos, 0);
-	size_pri_sec_dadosbarra = size_rows;
-	double** matriz_distrib_pri_sec_ynodal = lerMatrizDadosBarras(distrib_pri_sec_ynodal, &linhas, &colunas, &nao_nulos, 1);
-	size_pri_sec_ynodal = size_rows;
-
-
-//--------TESTE 1--------------------------------------------------------------
+	/*-------------------------- Calculo Teste 1  ----------------------*/
 	/*printf("Rodando Teste 1...\n");
 	double* x1 = criarVetorDinamicoDouble(2);
 	x1[0] = 1;
@@ -82,14 +57,14 @@ int main() {
 	// printf("Resultado Teste 1:\n");
 	// imprimirVetor(teste1, 2);
 
-//-----------------------------------------------------------------------TESTE 2
+	/*-------------------------- Calculo Teste 2  ----------------------*/
 	/*double* x = criarVetorDinamicoDouble(4);
 	x[0] = 1;
 	x[1] = 1;
 	x[2] = 1;
 	x[3] = 1;
 
-//--------TESTE 3---------------------------------------------------------------
+	/*-------------------------- Calculo Teste 3  ----------------------*/
 	// printf("Rodando Teste 3...\n");
 	// int N = 7;
 	//double* teste2 = metodo_de_newton2(x, 4, 0.1);
@@ -113,9 +88,6 @@ int main() {
 	// imprimirVetor(teste3, N); */
 
 
-//    double* fp = calculo_fp(x, x, 1, 1, Jx);
-
-
 	/*------------- Calculo rede 1: Stevenson -----------*/
 	/* a rede tem 5 barras, de 0 a 4
 	   uma barra do tipo swing
@@ -133,23 +105,6 @@ int main() {
 		printf("%le \n", x_st[i]);
 	}
 
-
-
-	/*---------------fim to calculo rede 1-----------*/
-}
-
-double Pcalc(int size_ynodal, int size_dadosbarra, double** matrix_ynodal, double** matrix_dadosbarra) {
-
-	double somatorio = 0;
-	double calculo;
-
-	for (int j=0; j<=size_dadosbarra; j++){
-		for (int k=0; k<= size_ynodal; k++ ){
-			calculo = matrix_dadosbarra[j][0];
-			somatorio = somatorio + calculo;
-		};
-	};
-	return calculo;
 }
 
 /*cria uma matriz dinamica*/
@@ -181,12 +136,6 @@ double** criarMatrizDinamica(int m, int n) {
 
 /*destroi uma matriz dinamica*/
 void destruirMatriz(double** Matriz, int linhas) {
-	/* Desaloca espaco na memoria antes de fechar o programa.
-	*  Sem isso, a memória RAM alocada no programa fica
-	*  ocupada até o reinicio do sistema.
-	*  Fonte: https://stackoverflow.com/questions/1824363/dynamic-allocation-deallocation-of-2d-3d-arrays
-	*/
-
 	int i;
 
 	for(i = 0;i < linhas; i++) {
@@ -310,7 +259,6 @@ double** decomposicao_LU(double** matriz, int n, int p[]) {
 			a[k][i] = matriz[k][i];
 		}
 	};
-
 	double somatorio;
 	double pivo;
 	int l;
@@ -349,8 +297,6 @@ double** decomposicao_LU(double** matriz, int n, int p[]) {
 			}
 		}
 	}
-
-
 return a;
 }
 
@@ -388,13 +334,11 @@ double** obter_matriz_U(double** matriz, int n) {
 /*calcula e retorna a solução de um sistema linear pelo metodo da decomposicao LU*/
 double* resolucao_sistema_linear(double** A, double* b, int n) {
 	//matriz A nxn
-
 	/*  Quero resolver o sistema Ax = b
 		tenho que c = Pb, sendo P o vetor das permutacoes na decomposicao LU
 		Ly=Pb
 		Ux=y
 	*/
-
 	int* p = criarVetorDinamicoInt(n); //vetor de permutacoes
 	for(int i=0; i<n ; i++){
 		p[i] = i;
@@ -434,8 +378,6 @@ double* resolucao_sistema_linear(double** A, double* b, int n) {
 		}
 		x[i] = (y[i] - s)/(U[i][i]);
 	}
-
-
 	//desalocando as matrizes e vetores criados que nao serao mais utilizados
 	free(y);
 	free(c);
@@ -467,10 +409,6 @@ double* soma_de_vetor(double* a, double* b, int n){
   return s;
 }
 
-/* Jc=-F -> c
-   novo x = x+c */
-
-
 /*calcula valor da Jacobiana J(x) no teste 1*/
 double** calcularJacobianaTeste1(double* x){
 	/*F(x,y) = (x-2)²-(y-3)²
@@ -482,7 +420,6 @@ double** calcularJacobianaTeste1(double* x){
 	J[1][1] = 2;
 
 	return J;
-
 }
 
 /*calcula valor da Jacobiana J(x) no teste 2*/
@@ -524,12 +461,10 @@ double** calcularJacobianaTeste2(double* x){
 
 }
 
-
 /*calcula valor da Jacobiana J(x) no teste 3*/
-/*
 double** calcularJacobianaTeste3(double* x, int n){
 	/*F1(x) = x[i-1] + 2x[i] - x[i+1] - e^x[i]/n^2*/
-/*    double n2 = ((n+1)*(n+1));
+	double n2 = ((n+1)*(n+1));
 	double** J = criarMatrizDinamica(n,n);
 	J[0][0] = 2 - ( exp(x[0]) / n2 );
 	J[0][1] = -1;
@@ -545,8 +480,7 @@ double** calcularJacobianaTeste3(double* x, int n){
 	imprimirMatriz(J, n, n);
 	printf("Jacobiana deu bom\n");
 	return J;
-
-}*/
+}
 
 double*  calcularFuncaoTeste1(double* x){
 	/*F(x,y) = (x-2)²-(y-3)²*/
@@ -571,12 +505,12 @@ double*  calcularFuncaoTeste2(double* x){
 
 	return F;
 }
-/*
+
 double*  calcularFuncaoTeste3(double* x, int n){
 	/*F1(x) = x[i-1] + 2x[i] - x[i+1] - e^x[i]/n^2
-	x[-1]= 0 ; x[n] = 0
-	*/
-	/*printf("n = %d\n", n);
+	x[-1]= 0 ; x[n] = 0 */
+
+	printf("n = %d\n", n);
 	double* F = criarVetorDinamicoDouble(n);
 	double n2 = ((n+1)*(n+1));
 
@@ -589,16 +523,14 @@ double*  calcularFuncaoTeste3(double* x, int n){
 	printf("F(x):\n");
 	imprimirVetor(F, n);
 
-
 	return F;
-}*/
+}
 
 double* metodo_de_newton_teste(double* x0, int n, double E, int teste){
 
 	double erro = 1.0;
 	double* x = x0;
 	int iteracoes = 1;
-
 	double** J;
 	double* F;
 	double* c;
@@ -627,7 +559,7 @@ double* metodo_de_newton_teste(double* x0, int n, double E, int teste){
 		printf("iteracoes: %d\n", iteracoes);
 		return x;
 	}
-/*
+
 	if(teste == 3){
 		while(erro > E){
 			J = calcularJacobianaTeste3(x, n);
@@ -642,11 +574,11 @@ double* metodo_de_newton_teste(double* x0, int n, double E, int teste){
 			// imprimirVetor(x, n);
 		}
 		return x;
-	}*/
+	}
 }
 
+/*cria a matriz G a partir dos dados obtidos dos arquivos disponibilizados*/
 double** criarMatrizG (int tipo, double** matriz_admitancias, int size){
-
 	double** G = criarMatrizDinamica(size, size);
 
 	int linha;
@@ -691,11 +623,10 @@ double** criarMatrizG (int tipo, double** matriz_admitancias, int size){
 		G[4][3] = 0.00000e+000 ;
 		G[4][04] = 7.35679e-003;
 	}
-
 	return G;
 }
 
-
+/*cria a matriz B a partir dos dados obtidos dos arquivos disponibilizados*/
 double** criarMatrizB (int tipo, double** matriz_admitancias, int size){
 
 	double** B = criarMatrizDinamica(size, size);
@@ -746,8 +677,7 @@ double** criarMatrizB (int tipo, double** matriz_admitancias, int size){
 	return B;
 }
 
-
-
+/*calcula o vetor F para a primeira rede (de stevenson)*/
 double* calculo_F(double* teta, double* V, int nPQ, int nPV, double** matriz_admitancias){
 	/*  teta é o vetor dos tetas, V é o vetor das tensoes
 		nPQ é o numero de barras PQ
@@ -786,8 +716,7 @@ double* calculo_F(double* teta, double* V, int nPQ, int nPV, double** matriz_adm
 	}
 
 	for(int i=0; i<nPV; i++){ //fp(j) = fp(j) - Pesp para as barras PV
-		F[nPQ + i] = F[nPQ + nPV ] - Pesp; //começa na barra PV
-/////////////		F[nPQ + i] = F[nPQ + nPV] - Pesp;
+		F[nPQ + i] = F[nPQ + i] - Pesp; //começa na barra PV
 	}
 
 	/* calculos de fq em F */
@@ -803,6 +732,7 @@ double* calculo_F(double* teta, double* V, int nPQ, int nPV, double** matriz_adm
 	return F;
 }
 
+/*calculo da matriz jacobiana para a rede 1 (de stevenson) */
 double** calculo_J(double* teta, double* V, int nPQ, int nPV, double** matriz_admitancias){
 
 	int size_barra = size_stevenson_dadosbarra; //para o caso 1 de stevenson
@@ -893,7 +823,7 @@ double** calculo_J(double* teta, double* V, int nPQ, int nPV, double** matriz_ad
 	return J;
 };
 
-
+/*calculo do metodo de newton para a rede 1 (de stevenson) */
 double* metodo_de_newton_stevenson(double* teta, double* V, int nPQ, int nPV, double** matriz_admitancias) {
 
 	double erro = 1;
@@ -918,13 +848,4 @@ double* metodo_de_newton_stevenson(double* teta, double* V, int nPQ, int nPV, do
 		it++;
 	}
 	return x;
-
-
-	printf("Matriz V \n ");
-	for (int i=0; i<2*nPQ+nPV; i++){
-		printf("%le \n", V[i]);
-	}
-
-	printf("\n \n \n");
-
 };
