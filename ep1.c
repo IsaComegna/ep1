@@ -58,34 +58,31 @@ int main() {
 	// imprimirVetor(teste1, 2);
 
 	/*-------------------------- Calculo Teste 2  ----------------------*/
-	/*double* x = criarVetorDinamicoDouble(4);
-	x[0] = 1;
-	x[1] = 1;
-	x[2] = 1;
-	x[3] = 1;
+	// double* x = criarVetorDinamicoDouble(4);
+	// x[0] = 1;
+	// x[1] = 1;
+	// x[2] = 1;
+	// x[3] = 1;
+
+	// double* teste2 = metodo_de_newton_teste(x, 4, 0.00001, 2);
+
+	// printf("Resultado Teste 2:\n");
+	// imprimirVetor(teste2, 4);
 
 	/*-------------------------- Calculo Teste 3  ----------------------*/
-	// printf("Rodando Teste 3...\n");
-	// int N = 7;
-	//double* teste2 = metodo_de_newton2(x, 4, 0.1);
-
-/*
-	printf("Resultado Teste 2:\n");
-	printf("%le \n", teste2[0]);
-	printf("%le \n", teste2[1]);
-	printf("%le \n", teste2[2]);
-	printf("%le \n", teste2[3]);*/
+	/*Definindo o tamanho do sistema*/
+	// int N = 39;
 
 	// /*Criando vetor unitário*/
+	// double* x3 = criarVetorDinamicoDouble(N);
 	// for(int i=0; i<N; i++){
 	//     x3[i] = 1;
 	// }
-	// // double wait = 2 - ( exp(x3[2]) / (N*N) );
-	// // printf("wait = %le\n", wait);
+
 	// double* teste3 = metodo_de_newton_teste(x3, N, 0.1, 3);
 
 	// printf("Resultado Teste 3:\n");
-	// imprimirVetor(teste3, N); */
+	// imprimirVetor(teste3, N);
 
 
 	/*------------- Calculo rede 1: Stevenson -----------*/
@@ -101,9 +98,9 @@ int main() {
 	int nPV = 1; //existe 1 uma barra PV na rede
 	double* x_st = metodo_de_newton_stevenson(teta, V, nPQ, nPV, matriz_stevenson_ynodal);
 
-	for (int i=0; i<5; i++){
-		printf("%le \n", x_st[i]);
-	}
+	// for (int i=0; i<5; i++){
+	// 	printf("%le \n", x_st[i]);
+	// }
 
 }
 
@@ -476,9 +473,6 @@ double** calcularJacobianaTeste3(double* x, int n){
 	J[n-1][n-2] = -1;
 	J[n-1][n-1] = 2 - ( exp(x[n-1]) / n2 );
 
-	printf("Jacobiana:\n");
-	imprimirMatriz(J, n, n);
-	printf("Jacobiana deu bom\n");
 	return J;
 }
 
@@ -509,8 +503,6 @@ double*  calcularFuncaoTeste2(double* x){
 double*  calcularFuncaoTeste3(double* x, int n){
 	/*F1(x) = x[i-1] + 2x[i] - x[i+1] - e^x[i]/n^2
 	x[-1]= 0 ; x[n] = 0 */
-
-	printf("n = %d\n", n);
 	double* F = criarVetorDinamicoDouble(n);
 	double n2 = ((n+1)*(n+1));
 
@@ -519,9 +511,6 @@ double*  calcularFuncaoTeste3(double* x, int n){
 		F[i] = -x[i-1] + 2*x[i] - x[i+1] - ( exp(x[i]) / n2 );
 	}
 	F[n-1] = -x[n-2] + 2*x[n-1] - ( exp(x[n-1]) / n2 );
-
-	printf("F(x):\n");
-	imprimirVetor(F, n);
 
 	return F;
 }
@@ -544,6 +533,8 @@ double* metodo_de_newton_teste(double* x0, int n, double E, int teste){
 			iteracoes++;
 			x = soma_de_vetor(x, c, n);
 		}
+		printf("iteracoes: %d\n", iteracoes);
+		printf("erro: %le\n", erro); 
 		return x;
 	}
 
@@ -557,6 +548,7 @@ double* metodo_de_newton_teste(double* x0, int n, double E, int teste){
 			x = soma_de_vetor(x, c, n);
 		}
 		printf("iteracoes: %d\n", iteracoes);
+		printf("erro: %le\n", erro); 
 		return x;
 	}
 
@@ -565,14 +557,12 @@ double* metodo_de_newton_teste(double* x0, int n, double E, int teste){
 			J = calcularJacobianaTeste3(x, n);
 			F = calcularFuncaoTeste3(x, n);
 			c = resolucao_sistema_linear(J, F, n);
-			// printf("c:\n");
-			// imprimirVetor(c, n);
 			erro = max_valor(c, n);
 			iteracoes++;
 			x = soma_de_vetor(x, c, n);
-			// printf("x:\n");
-			// imprimirVetor(x, n);
 		}
+		printf("iteracoes: %d\n", iteracoes);
+		printf("erro: %le\n", erro); 
 		return x;
 	}
 }
